@@ -1,4 +1,6 @@
+#include <regex.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define MAX_IDENTIFIER_LENGTH 10
 
@@ -10,8 +12,8 @@ typedef enum {
   numbersym = 3,
   plussym = 4,  //....
   minussym = 5, //.....
-  multsym = 6,
-  slashsym = 7,
+  multsym = 6,  //
+  slashsym = 7, //
   ifelsym = 8,
   eqlsym = 9,
   neqsym = 10,
@@ -22,7 +24,7 @@ typedef enum {
   lparentsym = 15,
   rparentsym = 16,
   commasym = 17,
-  semicolonsym = 18,
+  semicolonsym = 18, //
   periodsym = 19,
   becomessym = 20,
   beginsym = 21,
@@ -44,30 +46,39 @@ int tokenPrinter(char c) {
   switch (c) {
   case ';':
     return semicolonsym;
-    break;
   case '+':
     return plussym;
-    break;
   case '-':
-
+    return minussym;
+  case '*':
+    return multsym;
+  case '/':
+    return slashsym;
+  case '.':
+    return periodsym;
+  case '':
+    return;
+  case '':
+    return;
+  case '':
+    return;
+  case '':
+    return;
   default:
-    break;
+    return -1;
   }
 }
 
 int main(int argc, char *argv[]) {
-
-  // Reads and stores file contents within array `file`.
-
   if (argc < 2) {
-    printf("Error : please include the file name");
+    printf("Error: Please include the file name.\n");
     return 1;
   }
 
   FILE *fp = fopen(argv[1], "r");
 
   if (fp == NULL) {
-    printf("Error : cannot open file");
+    printf("Error: Cannot open file.\n");
     return -1;
   }
 
@@ -75,9 +86,11 @@ int main(int argc, char *argv[]) {
   int prevCharWasSpace = 0;
 
   int c;
+  char original[500];
 
   while ((c = fgetc(fp)) != EOF) {
-    if (currentIndex < 500) {
+    if (currentIndex < 499) {
+      original[currentIndex] = c;
       if (c == ' ' || c == '\t' || c == '\n') {
         if (!prevCharWasSpace) {
           file[currentIndex++] = ' ';
@@ -93,8 +106,11 @@ int main(int argc, char *argv[]) {
     }
   }
 
+  original[currentIndex] = '\0';
   file[currentIndex] = '\0';
 
+  printf("Original string:\n%s\n", original);
+  printf("\n\n");
   printf("Modified string:\n%s\n", file);
 
   fclose(fp);
