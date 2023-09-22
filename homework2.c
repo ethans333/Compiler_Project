@@ -40,6 +40,8 @@ typedef enum {
 
 int main(int argc, char *argv[]) {
 
+  // Reads and stores file contents within array `file`.
+
   if (argc < 2) {
     printf("Error : please include the file name");
     return 1;
@@ -52,23 +54,21 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  char inputArray[500];
-  int currentIndex =
-      0; // Initialize an index to track the current position in the array
-  int prevCharWasSpace = 0; // Flag to track consecutive white spaces
+  char file[500];
+  int currentIndex = 0;
+  int prevCharWasSpace = 0;
 
-  int c; // Variable to store the read character
+  int c;
 
   while ((c = fgetc(fp)) != EOF) {
-    if (currentIndex < 500) { // Check if there's still space in the array
+    if (currentIndex < 500) {
       if (c == ' ' || c == '\t' || c == '\n') {
         if (!prevCharWasSpace) {
-          inputArray[currentIndex++] =
-              ' '; // Replace consecutive white spaces with a single space
+          file[currentIndex++] = ' ';
           prevCharWasSpace = 1;
         }
       } else {
-        inputArray[currentIndex++] = c;
+        file[currentIndex++] = c;
         prevCharWasSpace = 0;
       }
     } else {
@@ -77,9 +77,9 @@ int main(int argc, char *argv[]) {
     }
   }
 
-  inputArray[currentIndex] = '\0'; // Null-terminate the array
+  file[currentIndex] = '\0';
 
-  printf("Modified string:\n%s\n", inputArray);
+  printf("Modified string:\n%s\n", file);
 
   fclose(fp);
   return 0;
