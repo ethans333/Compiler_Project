@@ -4,8 +4,40 @@
 
 #define MAX_IDENTIFIER_LENGTH 10
 
-char file[500];
-
+/*
+//   // numbersym:  
+//   // plussym: +
+//   // minussym: -
+//   // multsym: *
+//   // slashsym: /
+//   // oddsym: odd
+//   // eqsym: =
+//   // neqsym: <>
+//   // lessym: <
+//   // leqsym: <=
+//   // gtrsym: >
+//   // geqsym: >=
+//   // lparentsym: (
+//   // rparentsym: )
+//   // commasym: ,
+//   // semicolonsym: ;
+//   // periodsym: .
+//   // becomessym: :=
+//   // beginsym: begin
+//   // endsym: end
+//   // ifsym: if
+//   // thensym: then
+//   // whilesym: while
+//   // dosym: do
+//   // callsym: call
+//   // constsym: const
+//   // varsym: var
+//   // procsym: procedure
+//   // writesym: write
+//   // writelnsym: writeln
+//   // oddsym: odd
+//   // proceduresym: procedure
+*/
 typedef enum {
   skipsym = 1,
   identsym = 2,
