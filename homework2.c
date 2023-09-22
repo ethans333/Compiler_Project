@@ -2,7 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_IDENTIFIER_LENGTH 10
+#define MAX_ARRAY_LENGTH 100
+#define MAX_DIGITS_LENGTH 5
+#define MAX_CHARACTER_LENGTH 11
 
 regex_t regex;
 char file[500];
@@ -133,36 +135,23 @@ int main(int argc, char *argv[]) {
   FILE *fp = fopen(argv[1], "r");
 
   if (fp == NULL) {
-    printf("Error: Cannot open file.\n");
-    return -1;
+    printf("Error : cannot open file");
+    return 1;
   }
 
-  int currentIndex = 0;
-  int prevCharWasSpace = 0;
-
-  int c;
-  char original[500];
-
-  while ((c = fgetc(fp)) != EOF) {
-    if (currentIndex < 499) {
-      original[currentIndex] = c;
-      if (c == ' ' || c == '\t' || c == '\n') {
-        if (!prevCharWasSpace) {
-          file[currentIndex++] = ' ';
-          prevCharWasSpace = 1;
-        }
-      } else {
-        file[currentIndex++] = c;
-        prevCharWasSpace = 0;
-      }
-    } else {
-      printf("Error: Input exceeded 500 characters.\n");
-      break;
-    }
+  char arr[MAX_ARRAY_LENGTH];
+  int arrTracker = 0;
+  char c;
+  // read character input by fscanf
+  while (fscanf(fp, "%c", &c) != EOF) {
+    // reads the file and store chacracter bt chacracter in the arr
+    arr[arrTracker] = c;
+    arrTracker++;
   }
-
-  original[currentIndex] = '\0';
-  file[currentIndex] = '\0';
+  // arrTracker is the last index of the array
+  for (int i = 0; i < arrTracker; i++) {
+    printf("%c", arr[i]);
+  }
 
   printf("Original string:\n%s\n", original);
   printf("\n\n");
