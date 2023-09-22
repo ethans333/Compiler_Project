@@ -4,46 +4,48 @@
 
 #define MAX_IDENTIFIER_LENGTH 10
 
-/*
-//   // numbersym:  
-//   // plussym: +
-//   // minussym: -
-//   // multsym: *
-//   // slashsym: /
-//   // oddsym: odd
-//   // eqsym: =
-//   // neqsym: <>
-//   // lessym: <
-//   // leqsym: <=
-//   // gtrsym: >
-//   // geqsym: >=
-//   // lparentsym: (
-//   // rparentsym: )
-//   // commasym: ,
-//   // semicolonsym: ;
-//   // periodsym: .
-//   // becomessym: :=
-//   // beginsym: begin
-//   // endsym: end
-//   // ifsym: if
-//   // thensym: then
-//   // whilesym: while
-//   // dosym: do
-//   // callsym: call
-//   // constsym: const
-//   // varsym: var
-//   // procsym: procedure
-//   // writesym: write
-//   // writelnsym: writeln
-//   // oddsym: odd
-//   // proceduresym: procedure
-*/
+regex_t regex;
+char file[500];
+
+// numbersym:
+// plussym: +
+// minussym: -
+// multsym: *
+// slashsym: /
+// oddsym: odd
+// eqsym: =
+// neqsym: <>
+// lessym: <
+// leqsym: <=
+// gtrsym: >
+// geqsym: >=
+// lparentsym: (
+// rparentsym: )
+// commasym: ,
+// semicolonsym: ;
+// periodsym: .
+// becomessym: :=
+// beginsym: begin
+// endsym: end
+// ifsym: if
+// thensym: then
+// whilesym: while
+// dosym: do
+// callsym: call
+// constsym: const
+// varsym: var
+// procsym: procedure
+// writesym: write
+// writelnsym: writeln
+// oddsym: odd
+// proceduresym: procedure
+
 typedef enum {
   skipsym = 1,
   identsym = 2,
   numbersym = 3,
   plussym = 4,  //....
-  minussym = 5, //.....
+  minussym = 5, //....
   multsym = 6,  //
   slashsym = 7, //
   ifelsym = 8,
@@ -57,7 +59,7 @@ typedef enum {
   rparentsym = 16,
   commasym = 17,
   semicolonsym = 18, //
-  periodsym = 19,
+  periodsym = 19,    //
   becomessym = 20,
   beginsym = 21,
   endsym = 22,
@@ -74,32 +76,53 @@ typedef enum {
   elsesym = 33
 } token_type;
 
-int tokenPrinter(char c) {
-  switch (c) {
-  case ';':
-    return semicolonsym;
-  case '+':
-    return plussym;
-  case '-':
-    return minussym;
-  case '*':
-    return multsym;
-  case '/':
-    return slashsym;
-  case '.':
-    return periodsym;
-  case '':
-    return;
-  case '':
-    return;
-  case '':
-    return;
-  case '':
-    return;
-  default:
-    return -1;
+void readRegularExpression() {
+  int status = regcomp(&regex, "[:number:]", 0);
+
+  if (status != 0) {
+    printf("Invalid Regex!");
   }
+
+  int match = regexec(&regex, "12345", 0, NULL, 0);
+
+  // Check for a match
+  if (match == 0) {
+    printf("Match\n");
+  } else {
+    printf("No Match\n");
+  }
+
+  regfree(&regex);
 }
+
+// int tokenPrinter(char c) {
+//   if (c == '<>') {
+//   }
+//   switch (c) {
+//   case ';':
+//     return semicolonsym;
+//   case '+':
+//     return plussym;
+//   case '-':
+//     return minussym;
+//   case '*':
+//     return multsym;
+//   case '/':
+//     return slashsym;
+//   case '.':
+//     return periodsym;
+//   case '<>':
+//     return;
+//   case '':
+//     return;
+//   case '':
+//     return;
+//   case '':
+//     return;
+//   default:
+//     return -1;
+//   }
+// }
 
 int main(int argc, char *argv[]) {
   if (argc < 2) {
@@ -144,6 +167,8 @@ int main(int argc, char *argv[]) {
   printf("Original string:\n%s\n", original);
   printf("\n\n");
   printf("Modified string:\n%s\n", file);
+
+  readRegularExpression();
 
   fclose(fp);
   return 0;
