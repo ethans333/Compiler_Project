@@ -2,12 +2,14 @@
 
 #define MAX_IDENTIFIER_LENGTH 10
 
+char file[500];
+
 typedef enum {
   skipsym = 1,
   identsym = 2,
   numbersym = 3,
-  plussym = 4,
-  minussym = 5,
+  plussym = 4,  //....
+  minussym = 5, //.....
   multsym = 6,
   slashsym = 7,
   ifelsym = 8,
@@ -38,6 +40,21 @@ typedef enum {
   elsesym = 33
 } token_type;
 
+int tokenPrinter(char c) {
+  switch (c) {
+  case ';':
+    return semicolonsym;
+    break;
+  case '+':
+    return plussym;
+    break;
+  case '-':
+
+  default:
+    break;
+  }
+}
+
 int main(int argc, char *argv[]) {
 
   // Reads and stores file contents within array `file`.
@@ -54,7 +71,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  char file[500];
   int currentIndex = 0;
   int prevCharWasSpace = 0;
 
