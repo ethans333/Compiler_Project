@@ -1,13 +1,16 @@
-#include <regex.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
-#define MAX_ARRAY_LENGTH 100
-#define MAX_DIGITS_LENGTH 5
+#define MAX_ARRAY_LENGTH 500
 #define MAX_CHARACTER_LENGTH 11
+#define MAX_DIGITS_LENGTH 5
 
-regex_t regex;
-char file[500];
+char file[MAX_ARRAY_LENGTH];
+int tokenList[MAX_ARRAY_LENGTH];
+char word[MAX_CHARACTER_LENGTH];
+char digits[MAX_DIGITS_LENGTH];
 
 // numbersym:
 // plussym: +
@@ -15,18 +18,18 @@ char file[500];
 // multsym: *
 // slashsym: /
 // oddsym: odd
-// eqsym: =
-// neqsym: <>
-// lessym: <
-// leqsym: <=
-// gtrsym: >
-// geqsym: >=
+// x eqsym: =
+// x neqsym: <>
+// x lessym: <
+// x leqsym: <=
+// x gtrsym: >
+// x geqsym: >=
 // lparentsym: (
 // rparentsym: )
 // commasym: ,
 // semicolonsym: ;
 // periodsym: .
-// becomessym: :=
+// x becomessym: :=
 // beginsym: begin
 // endsym: end
 // ifsym: if
@@ -78,54 +81,6 @@ typedef enum {
   elsesym = 33
 } token_type;
 
-void readRegularExpression() {
-  int status = regcomp(&regex, "[:number:]", 0);
-
-  if (status != 0) {
-    printf("Invalid Regex!");
-  }
-
-  int match = regexec(&regex, "12345", 0, NULL, 0);
-
-  // Check for a match
-  if (match == 0) {
-    printf("Match\n");
-  } else {
-    printf("No Match\n");
-  }
-
-  regfree(&regex);
-}
-
-// int tokenPrinter(char c) {
-//   if (c == '<>') {
-//   }
-//   switch (c) {
-//   case ';':
-//     return semicolonsym;
-//   case '+':
-//     return plussym;
-//   case '-':
-//     return minussym;
-//   case '*':
-//     return multsym;
-//   case '/':
-//     return slashsym;
-//   case '.':
-//     return periodsym;
-//   case '<>':
-//     return;
-//   case '':
-//     return;
-//   case '':
-//     return;
-//   case '':
-//     return;
-//   default:
-//     return -1;
-//   }
-// }
-
 int main(int argc, char *argv[]) {
   if (argc < 2) {
     printf("Error: Please include the file name.\n");
@@ -135,30 +90,135 @@ int main(int argc, char *argv[]) {
   FILE *fp = fopen(argv[1], "r");
 
   if (fp == NULL) {
-    printf("Error : cannot open file");
+    printf("Error: Cannot open file.\n");
     return 1;
   }
 
-  char arr[MAX_ARRAY_LENGTH];
-  int arrTracker = 0;
-  char c;
-  // read character input by fscanf
-  while (fscanf(fp, "%c", &c) != EOF) {
-    // reads the file and store chacracter bt chacracter in the arr
-    arr[arrTracker] = c;
-    arrTracker++;
+  int i = 0, j = 0, k = 0, fileLen = 0;
+  char ch;
+  bool lastWasSpace = false;
+
+  while ((ch = fgetc(fp)) != EOF) {
+    putchar(ch);
+
+    if (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r') {
+      if (!lastWasSpace) {
+        file[i++] = ' ';
+        lastWasSpace = true;
+      }
+    } else {
+      file[i++] = ch;
+      lastWasSpace = false;
+    }
+
+    if (i >= MAX_ARRAY_LENGTH - 1) {
+      printf("Error: Input file is too large.\n");
+      fclose(fp);
+      return 1;
+    }
   }
-  // arrTracker is the last index of the array
-  for (int i = 0; i < arrTracker; i++) {
-    printf("%c", arr[i]);
-  }
 
-  printf("Original string:\n%s\n", original);
-  printf("\n\n");
-  printf("Modified string:\n%s\n", file);
-
-  readRegularExpression();
-
+  file[i] = '\0';
+  fileLen = i + 1;
   fclose(fp);
+
+  printf("\n\n%s\n\n", file);
+
+  for (i = 0; i < fileLen; i++) {
+    ch = file[i];
+
+    if (ch >= 'A' && ch <= 'z') { // If Letter
+      word[j++] = ch;
+    } else if (ch >= '0' && ch <= '9') { // If digit
+      if (j != 0) {                      // Is digit from identifier
+        word[j++] = ch;
+      } else { // Is digit from value
+        digits[k++] = ch;
+      }
+    } else { // If special symbol
+
+      // End of idenitfier name or reserved word
+      if (j > 0) {
+        word[j + 1] = '\0';
+        printf("%s|", word);
+      } else if (k > 0) {
+        digits[k + 1] = '\0';
+        printf("%s|", digits);
+      }
+
+      // Wipe word array
+      memset(word, 0, MAX_CHARACTER_LENGTH);
+      j = 0;
+      memset(digits, 0, MAX_DIGITS_LENGTH);
+      k = 0;
+
+      // There exist a next char in the array
+      bool isNext = i + 1 < fileLen;
+
+      switch (ch) {
+      case '+':
+        printf("%c|", ch);
+        break;
+      case '-':
+        printf("%c|", ch);
+        break;
+      case '*':
+        printf("%c|", ch);
+        break;
+      case '/':
+        if (isNext && file[i + 1] == '*') { // /*
+          // **Handle Comment Case**
+        } else { // /
+          printf("%c|", ch);
+        }
+        break;
+      case '(':
+        printf("%c|", ch);
+        break;
+      case ')':
+        printf("%c|", ch);
+        break;
+      case '=':
+        printf("%c|", ch);
+        break;
+      case ',':
+        printf("%c|", ch);
+        break;
+      case '<':
+        if (isNext) {
+          if (file[i + 1] == '>') { // <>
+            printf("%c%c|", ch, file[i + 1]);
+            i++;
+          } else if (file[i + 1] == '=') { // <=
+            printf("%c%c|", ch, file[i + 1]);
+            i++;
+          } else { // <
+            printf("%c|", ch);
+          }
+        }
+        break;
+      case '>':
+        if (isNext && file[i + 1] == '=') { // >=
+          printf("%c%c|", ch, file[i + 1]);
+          i++;
+        } else { // >
+          printf("%c|", ch);
+        }
+        break;
+      case ';':
+        printf("%c|", ch);
+        break;
+      case ':':
+        if (isNext && file[i + 1] == '=') { // :=
+          printf("%c%c|", ch, file[i + 1]);
+          i++;
+        }
+        break;
+      default:
+        break;
+      }
+    }
+  }
+
   return 0;
 }
